@@ -1,0 +1,11 @@
+# Work around lack of b43 hibernate support
+
+case "${1}" in
+        hibernate|suspend)
+                rmmod b43
+                rmmod bcma
+                ;;
+        resume|thaw)
+                modprobe b43
+                ;;
+esac
