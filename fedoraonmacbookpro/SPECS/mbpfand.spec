@@ -1,5 +1,5 @@
 #
-# spec file for package macfanctld
+# spec file for package mbpfand
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,26 +12,27 @@
 
 # norootforbuild
 
-Name:           macfanctld
+Name:           mbpfand
 BuildRequires:  gcc make
 Requires:       coreutils
 License:        GPL v2
 Group:          System/Kernel
 Autoreqprov:    on
-Summary:        Apple fan control daemon
-Version:        0.9
-Release:        2
+Summary:        Simple Apple fan control daemon
+Version:        0.1
+Release:        4
 Source:         %{name}-%{version}.tar.gz
-Source1:        macfanctl.conf
-Source2:        macfanctld.1
-Source3:        macfanctl
+Source1:        mbpfan.conf
+Source2:        mbpfand.1
+Source3:        mbpfan
+Source4:        coretemp.conf
 #URL:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-%description -n macfanctld
-macfanctld is a daemon that reads temperature sensors and adjust the fan(s) speed on MacBook's. macfanctld is configurable and logs temp and fan data to a file. macfanctld uses three sources to determine the fan speeed: 1) average temperature from all sensors, 2) sensor TC0P [CPU 0 Proximity Temp and 3] and sensor TG0P [GPU 0 Proximity Temp]. Each source's impact on fan speed can be individually adjusted to fine tune working temperature on different MacBooks.
+%description -n mbpfand
+This is a daemon that uses input from coretemp module and sets the fan speed using the applesmc module.
 
-Important: macfanctld depends on applesmc
+
 %prep
 %setup -q -n %{name}
 %build
@@ -40,12 +41,14 @@ make
 %install
 mkdir -p $RPM_BUILD_ROOT/etc
 mkdir -p $RPM_BUILD_ROOT/etc/init.d
+mkdir -p $RPM_BUILD_ROOT/etc/modules-load.d
 mkdir -p $RPM_BUILD_ROOT/usr/share/man/man1
 mkdir -p $RPM_BUILD_ROOT/usr/sbin
 install -m 0644 %{S:1} $RPM_BUILD_ROOT/etc/
 install -m 0644 %{S:2} $RPM_BUILD_ROOT/usr/share/man/man1/
-install -m 0755 macfanctld $RPM_BUILD_ROOT/usr/sbin/
+install -m 0755 mbpfand $RPM_BUILD_ROOT/usr/sbin/
 install -m 0755 %{S:3} $RPM_BUILD_ROOT/etc/init.d/
+install -m 0644 %{S:4} $RPM_BUILD_ROOT/etc/modules-load.d/
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -57,14 +60,13 @@ install -m 0755 %{S:3} $RPM_BUILD_ROOT/etc/init.d/
 %dir %_prefix/share
 %dir %_prefix/share/man
 %dir %_prefix/share/man/man1
-%config  /etc/macfanctl.conf
-/etc/init.d/macfanctl
-%_prefix/share/man/man1/macfanctld.1.gz
-%_prefix/sbin/macfanctld
+%config  /etc/mbpfan.conf
+/etc/init.d/mbpfan
+/etc/modules-load.d/coretemp.conf
+%_prefix/share/man/man1/mbpfand.1.gz
+%_prefix/sbin/mbpfand
 
 %changelog
 * Sat Mar 10 2012 santiagoangel@gmail.com
-- Version 0.9 from https://launchpad.net/macfanctld
+- Version 0.1 from https://github.com/rvega/Fan-Control-Daemon
 
-* Mon Oct 18 2010 alinm.elena@gmail.com
-  initial commit -

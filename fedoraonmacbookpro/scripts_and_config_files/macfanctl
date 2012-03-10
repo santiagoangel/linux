@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+# macfanctl         Startup script for macfanctld
+#
+# chkconfig:   - 10 90
+# description: macfanctld daemon providing macbook fan control.
+# processname: macfanctld
+# config:      /etc/macfanctl.conf
+# pidfile:     /var/run/macfanctld.pid
+
+### BEGIN INIT INFO
+# Provides:          macfanctld
+# Should-Start: $syslog $network
+# Should-Stop: $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: macfanctld daemon providing macbook fan control
+# Description:       Start macfanctld to allow control over fan on macbook
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+exec="/usr/sbin/macfanctld"
+
+prog=$(basename $exec)
+
+lockfile=/var/run/macfanctld.pid
+
+
+PID=`pidof -o %PPID /usr/sbin/macfanctld`
+
+
+start() {
+    retval=0
+    stat_busy "Starting macfanctld"
+    [ -z "$PID" ] && /usr/sbin/macfanctld
+    if [ $? -gt 0 ]; then
+      stat_fail
+      retval=-1
+    else
+      echo $PID > /var/run/macfanctld.pid
+      add_daemon macfanctld
+      stat_done
+      retval=0
+    fi
+    return $retval
+}
+stop() {
+    retval=0
+    stat_busy "Stopping macfanctld"
+    [ ! -z "$PID" ]  && kill $PID &> /dev/null
+    if [ $? -gt 0 ]; then
+      stat_fail
+      retval=-1
+    else
+      rm /var/run/macfanctld.pid
+      rm_daemon macfanctld
+      stat_done
+      retval=0
+    fi
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+reload() {
+    
+    if status $prog >/dev/null 2>&1 ; then
+        restart
+    else
+        echo -n $"Reloading macfanctl daemon ($prog): "
+        killproc $prog -HUP
+        retval=$?
+        echo
+        return $retval
+    fi
+}
+
+case "$1" in
+    start|stop|restart|reload)
+        $1
+        ;;
+    force-reload)
+        reload || restart
+        ;;
+    status)
+        status $prog
+        ;;
+    try-restart|condrestart)
+  	[ ! -f $lockfile ] || restart
+	;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload}"
+        exit 2
+esac
