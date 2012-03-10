@@ -19,8 +19,8 @@ License:        GPL v2
 Group:          System/Kernel
 Autoreqprov:    on
 Summary:        Simple Apple fan control daemon
-Version:        0.1
-Release:        4
+Version:        0.4
+Release:        1
 Source:         %{name}-%{version}.tar.gz
 Source1:        mbpfan.conf
 Source2:        mbpfand.1
@@ -67,6 +67,15 @@ install -m 0644 %{S:4} $RPM_BUILD_ROOT/etc/modules-load.d/
 %_prefix/sbin/mbpfand
 
 %changelog
+* Sat Mar 10 2012 santiagoangel@gmail.com
+- Version 0.4  include temperature measure from /sys/devices/platform/coretemp.0/temp1_input.
+
+* Sat Mar 10 2012 santiagoangel@gmail.com
+- Version 0.3  setting low_temp=50, high_temp=58 & max_temp=78.
+
+* Sat Mar 10 2012 santiagoangel@gmail.com
+- Version 0.2 fan speed and temperatures adjusted.
+
 * Sat Mar 10 2012 santiagoangel@gmail.com
 - Version 0.1 from https://github.com/rvega/Fan-Control-Daemon
 
