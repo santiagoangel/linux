@@ -20,7 +20,7 @@ Group:          System/Kernel
 Autoreqprov:    on
 Summary:        Simple Apple fan control daemon
 Version:        0.4
-Release:        1
+Release:        2
 Source:         %{name}-%{version}.tar.gz
 Source1:        mbpfan.conf
 Source2:        mbpfand.1
